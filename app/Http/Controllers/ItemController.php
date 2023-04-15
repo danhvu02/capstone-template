@@ -74,12 +74,28 @@ class ItemController extends Controller
         //save image
         if ($request->hasFile('picture')) {
             $image = $request->file('picture');
-
+    
+            // Save the original image
             $filename = time() . '.' . $image->getClientOriginalExtension();
-            $location ='images/items/' . $filename;
-
-            $image = Image::make($image);
-            Storage::disk('public')->put($location, (string) $image->encode());
+            $location = 'images/items/' . $filename;
+            Storage::disk('public')->put($location, file_get_contents($image));
+    
+            // Resize the thumbnail
+            $thumbnail = Image::make($image)->resize(100, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $thumbnailFilename = 'tn_' . $filename;
+            $thumbnailLocation = 'images/items/' . $thumbnailFilename;
+            Storage::disk('public')->put($thumbnailLocation, (string) $thumbnail->encode());
+    
+            // Resize the large image
+            $largeImage = Image::make($image)->resize(600, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $largeImageFilename = 'lrg_' . $filename;
+            $largeImageLocation = 'images/items/' . $largeImageFilename;
+            Storage::disk('public')->put($largeImageLocation, (string) $largeImage->encode());
+    
             $item->picture = $filename;
         }
 
@@ -190,4 +206,5 @@ class ItemController extends Controller
         return redirect()->route('items.index');
 
     }
+
 }

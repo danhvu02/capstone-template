@@ -70,7 +70,10 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category = Category::findOrFail($id);
+        $items = $category->items;
+        $categories = Category::all();
+        return view('products.index', compact('category', 'items', 'categories'));
     }
 
     /**
@@ -125,8 +128,6 @@ class CategoryController extends Controller
             return redirect()->back()->with('error', 'Cannot delete category with associated items.');
         }
         
-
-    
         $category->delete();
     
         Session::flash('success','The category has been deleted');
@@ -134,4 +135,12 @@ class CategoryController extends Controller
         return redirect()->route('categories.index');
 
     }
+
+    public function chosenCategory($id){
+        $categories = Category::all();
+        $selectedCategory = Category::find($id);
+        $itemsInSameCategory = $selectedCategory->items;
+        return view('products.index', compact('categories', 'itemsInSameCategory'));
+    }
+
 }
