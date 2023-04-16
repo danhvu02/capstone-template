@@ -35,14 +35,14 @@ Laravel Project
                         <tr>
                             <td>
                                 @if (Storage::disk('public')->exists('images/items/' . $item->picture))
-                                <a href="{{ route('products.show', $item->id) }}"><img  src="{{ asset('storage/images/items/' . $item->picture) }}" alt="{{ $item->title }} " width="100" /></a>              
+                                <a href="{{ route('products.show', $item->id) }}"><img  src="{{ asset('storage/images/items/tn_' . $item->picture) }}" alt="{{ $item->title }} "/></a>              
                                 @else
                                     No image available
                                 @endif
                             </td>
                             <td><a href="{{ route('products.show', $item->id) }}">{{ $item->title }}</a></td>
                             <td>${{ $item->price }}</td>
-                            <td><a href="#" class="btn btn-primary">Buy Now</a></td>
+                            <td><a href="{{ route('products.addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a></td>
                         </tr>
                     @endforeach
                 </tbody>

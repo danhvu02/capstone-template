@@ -5,13 +5,34 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Cart;
 use Image;
 use Storage;
 use Session;
-use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
+    //constructor 
+    //called automatically when an object of the class is created
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next){
+            // If the session ID and/or IP address are not already set in the session
+            if (!$request->session()->has('session_id')) {
+                //generates a unique session ID
+                $session_id = uniqid();
+                Session::put('session_id', $session_id);
+            }
+    
+            if (!$request->session()->has('ip_address')) {
+                // retrieves the IP address from the request
+                $ip_address = $request->ip();
+                Session::put('ip_address', $ip_address);
+            }
+            return $next($request);
+        });
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -49,41 +70,24 @@ class ProductController extends Controller
         return view('products.show')->with('item',$item);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+
+    public function addToCart(Request $request, $id)
     {
-        // Move the image to the images directory
-        $filename = $request->file('picture')->getClientOriginalName();
-        $request->file('picture')->move(public_path('images/items/'), $filename);
+        $item = Item::find($id);
 
-        // Resize the thumbnail
-        $thumbnail = Image::make(public_path('images/items/' . $filename));
-        $thumbnail->resize(100, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $thumbnail->save(public_path('images/items/tn_' . $filename));
+        //if the item doesn't exist, return a 404 error.
+        if(!$item) {
+            abort(404);
+        }
 
-        // Resize the large image
-        $largeImage = Image::make(public_path('images/items/' . $filename));
-        $largeImage->resize(600, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-        $largeImage->save(public_path('images/items/lrg_' . $filename));
+        $cart = new Cart();
+        $cart->item_id = $item->id;
+        $cart->session_id = session()->getId();
+        $cart->ip_address = $request->ip();
+        $cart->quantity = 1;
+        $cart->save();
 
-        // Save the new item to the database
-        $item = new Item();
-        $item->title = $request->input('title');
-        $item->description = $request->input('description');
-        $item->category_id = $request->input('category_id');
-        $item->price = $request->input('price');
-        $item->quantity = $request->input('quantity');
-        $item->sku = $request->input('sku');
-        $item->image = $filename;
-        $item->save();
-    }
+        return redirect()->route('cart');
+    }   
+
 }

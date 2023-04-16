@@ -21,7 +21,7 @@ Laravel Project
     <div class="row">
         <div class="col-md-6">
             @if (Storage::disk('public')->exists('images/items/' . $item->picture))
-               <img  src="{{ asset('storage/images/items/' . $item->picture) }}" alt="{{ $item->title }} " width="100%" />
+               <img  src="{{ asset('storage/images/items/lrg_' . $item->picture) }}" alt="{{ $item->title }} "/>
             @else
                 No image available
             @endif
@@ -33,7 +33,7 @@ Laravel Project
             <p>Price: ${{ $item->price }}</p>
             <p>Quantity: {{ $item->quantity }}</p>
             <p>SKU: {{ $item->sku }}</p>
-            <a href="#" class="btn btn-primary">Buy Now</a>
+            <a href="{{ route('products.addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a>
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Back to Products</a>
 
         </div>
