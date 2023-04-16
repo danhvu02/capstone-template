@@ -87,7 +87,7 @@ class ProductController extends Controller
         $cart->quantity = 1;
         $cart->save();
 
-        return redirect()->route('cart');
+        return redirect()->route('cart.index');
     }   
 
 }

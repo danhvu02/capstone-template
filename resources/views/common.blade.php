@@ -39,6 +39,7 @@
             <li class="{{ Request::is('categories/*') || Request::is('categories') ? "active" : "" }}"><a href="/categories">Categories</a></li>
             <li class="{{ Request::is('items/*') || Request::is('items') ? "active" : "" }}"><a href="/items">Items</a></li>
             <li class="{{ Request::is('products/*') || Request::is('products') ? "active" : ""}}"><a href="/products">Products</a></li>
+            <li class="{{ Request::is('cart/*') || Request::is('cart') ? "active" : ""}}"><a href="/cart">Shopping Cart</a></li>
           </ul>
           <ul class="nav navbar-nav navbar-right">
           </ul>

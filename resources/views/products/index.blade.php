@@ -42,7 +42,7 @@ Laravel Project
                             </td>
                             <td><a href="{{ route('products.show', $item->id) }}">{{ $item->title }}</a></td>
                             <td>${{ $item->price }}</td>
-                            <td><a href="{{ route('products.addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a></td>
+                            <td><a href="{{ route('addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a></td>
                         </tr>
                     @endforeach
                 </tbody>

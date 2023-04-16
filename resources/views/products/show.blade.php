@@ -8,14 +8,6 @@ Product Detail
 Laravel Project
 @endsection
 
-@section('scripts')
-{!! Html::script('/bower_components/parsleyjs/dist/parsley.min.js') !!}
-@endsection
-
-@section('css')
-{!! Html::style('/css/parsley.css') !!}
-@endsection
-
 @section('content')
 <div class="container">
     <div class="row">
@@ -33,7 +25,7 @@ Laravel Project
             <p>Price: ${{ $item->price }}</p>
             <p>Quantity: {{ $item->quantity }}</p>
             <p>SKU: {{ $item->sku }}</p>
-            <a href="{{ route('products.addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a>
+            <a href="{{ route('addToCart', $item->id) }}" class="btn btn-primary">Add to cart</a>
             <a href="{{ route('products.index') }}" class="btn btn-secondary">Back to Products</a>
 
         </div>

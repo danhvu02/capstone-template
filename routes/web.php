@@ -17,6 +17,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('categories', '\App\Http\Controllers\CategoryController');
 });
 Route::resource('products', '\App\Http\Controllers\ProductController');
+//Route::resource('cart', '\App\Http\Controllers\ProductController');
 
 
 Route::get('/', function () {
@@ -26,4 +27,10 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
 Route::get('/products/{id}', [App\Http\Controllers\CategoryController::class, 'chosenCategory'])->name('chosenCategory');
+Route::get('/add-to-cart/{id}', [App\Http\Controllers\ProductController::class, 'addToCart'])->name('addToCart');
+
+Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
+Route::delete('/cart/{id}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
+Route::put('/cart/{id}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
