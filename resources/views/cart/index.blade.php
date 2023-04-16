@@ -60,7 +60,37 @@ Laravel Project
                         </tr>
                     </tbody>
                 </table>
+
+                <h2>Customer Information</h2>
+                {!! Form::open(['route' => 'check_order', 'id' => 'order-form']) !!}
+                {{ csrf_field() }}
+                <div class="form-group">
+                    {!! Form::label('first_name', 'First Name') !!}
+                    {!! Form::text('first_name', null, ['class' => 'form-control', 'id' => 'first_name', 'placeholder' => 'Enter first name', 'required' => true]) !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::label('last_name', 'Last Name') !!}
+                    {!! Form::text('last_name', null, ['class' => 'form-control', 'id' => 'last_name', 'placeholder' => 'Enter last name', 'required' => true]) !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::label('phone', 'Phone') !!}
+                    {!! Form::text('phone', null, ['class' => 'form-control', 'id' => 'phone', 'placeholder' => 'Enter phone', 'required' => true]) !!}
+                </div>
+                <div class="form-group">
+                    {!! Form::label('email', 'Email') !!}
+                    {!! Form::email('email', null, ['class' => 'form-control', 'id' => 'email', 'placeholder' => 'Enter email', 'required' => true]) !!}
+                </div>
+                {{ Form::hidden('session_id', session()->getId()) }}
+                {{ Form::hidden('ip', session()->get('ip')) }}
+                <!-- display cart items here -->
+                {!! Form::submit('Submit Order', ['class' => 'btn btn-primary']) !!}
+                {!! Form::close() !!}
+                @yield('scripts')
             </div>
         </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/parsley.min.js') }}"></script>
 @endsection

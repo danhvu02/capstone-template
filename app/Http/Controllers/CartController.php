@@ -3,8 +3,14 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Cart;
+use Illuminate\Support\Facades\Validator;
 use Session;
+
+use App\Models\Cart;
+use App\Models\Order;
+use App\Models\Item;
+
+use App\Models\ItemsSold;
 
 class CartController extends Controller
 {
@@ -53,7 +59,7 @@ class CartController extends Controller
         return redirect()->route('cart.index')->with('success', 'Cart updated successfully.');
     }
 
-    public function remove(Request $request, $id)
+    public function remove($id)
     {
         $cartItem = Cart::find($id);
     
@@ -64,5 +70,71 @@ class CartController extends Controller
         $cartItem->delete();
     
         return redirect()->route('cart.index')->with('success', 'Item has been removed from your cart.');
+    }
+
+    public function checkOrder(Request $request)
+    {
+        // validate form fields
+        $validator = Validator::make($request->all(), [
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'phone' => 'required',
+            'email' => 'required|email',
+        ]);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // fields are valid, insert order info
+        $order = new Order;
+        $order->session_id = $request->session()->getId();
+        $order->ip_address = $request->ip();
+        $order->first_name = $request->input('first_name');
+        $order->last_name = $request->input('last_name');
+        $order->phone = $request->input('phone');
+        $order->email = $request->input('email');
+        $order->save();
+        $orderId = $order->id;
+
+        $session_id = $request->session()->getId();
+        $itemsInCarts = Cart::where('session_id', $session_id)->get(['item_id', 'quantity']);
+
+        $itemsSold = [];
+        $total = 0;
+        foreach ($itemsInCarts as $cartItem) {
+            $itemModel = Item::find($cartItem->item_id);
+            $subtotal = $cartItem->quantity * $itemModel->price;
+            $total += $subtotal;
+
+            $itemsSold[] = [
+                'item' => $itemModel,
+                'quantity' => $cartItem->quantity,
+                'subtotal' => $subtotal,
+            ];
+
+            $itemsSoldDB = new ItemsSold;
+            $itemsSoldDB->order_id = $orderId;
+            $itemsSoldDB->item_id = $cartItem->item_id;
+            $itemsSoldDB->item_price = $itemModel->price;
+            $itemsSoldDB->quantity = $cartItem->quantity;
+            $itemsSoldDB->save();
+        }
+
+        // unset session_id
+        $request->session()->forget('session_id');
+        $request->session()->regenerate();
+
+        // redirect to thank you page with order info
+        return view('cart.thankyou')->with([
+            'orderId' => $orderId,
+            'firstName' => $order->first_name,
+            'lastName' => $order->last_name,
+            'phone' => $order->phone,
+            'email' => $order->email,
+            'itemsSold' => $itemsSold,
+            'total' => $total,
+        ]);
+
+
     }
 }

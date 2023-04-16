@@ -73,6 +73,7 @@ class ProductController extends Controller
 
     public function addToCart(Request $request, $id)
     {
+        // Retrieve the item from the database
         $item = Item::find($id);
 
         //if the item doesn't exist, return a 404 error.

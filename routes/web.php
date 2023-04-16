@@ -34,3 +34,6 @@ Route::get('/add-to-cart/{id}', [App\Http\Controllers\ProductController::class, 
 Route::get('/cart', [App\Http\Controllers\CartController::class, 'index'])->name('cart.index');
 Route::delete('/cart/{id}', [App\Http\Controllers\CartController::class, 'remove'])->name('cart.remove');
 Route::put('/cart/{id}', [App\Http\Controllers\CartController::class, 'update'])->name('cart.update');
+Route::post('/check_order', [App\Http\Controllers\CartController::class, 'checkOrder'])->name('check_order');
+
+Route::get('/admin/orders', 'Admin\OrderController@index')->name('admin.orders');
